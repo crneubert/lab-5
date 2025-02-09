@@ -4,6 +4,9 @@ author: "Carson Neubert"
 format: html
 editor: source
 embed-resources: true
+code-tools: true
+echo: true
+code-fold: true
 ---
 
 For this lab, you will be joining and filtering related datasets to solve a murder mystery!
@@ -56,10 +59,162 @@ Detective Wickham reaches out to you...
 ```{r}
 #| label: inspecting-crime-scene-report
 
+
+crimes <- crime_scene_report |>
+  filter(date == 20180115,
+         city == "SQL City",
+         type == "murder") 
+
+print(crimes$description)
 ```
 
 **Follow the evidence to the person responsible for the murder, building a report as you go.** Hint: Make sure you check for interviews with any suspects!
 
+## **Analyzing Witnesses**
+
+```{r}
+#| label: analyzing-first-witness
+
+witness1 <- person |>
+  filter(address_street_name == "Northwestern Dr") |>
+  slice_max(address_number)
+print(witness1)
+
+witness2 <- person |>
+  filter(address_street_name == "Franklin Ave",
+         str_detect(name, pattern = "Annabel")) |>
+print(witness2)
+
+```
+
+The first witness is Morty Schapiro (14887) and the second is Annabel Miller (16371)
+
+**Looking at interviews**
+
+```{r}
+#| label: witness-interview
+
+witness_interviews <- interview |>
+  filter((person_id %in% c(14887, 16371)))
+
+print(witness_interviews$transcript)
+
+```
+
+Information given:
+
+-   Get Fit Now Gym membership number starts with "48Z"
+
+-   gold member at the gym
+
+-   Car plate includes "H42W"
+
+-   working out on January 9
+
+**Narrowing down the search from given information**
+
+```{r}
+#| label: examining-gym-data
+
+# merge gym data
+gym_members <- get_fit_now_member |>
+  inner_join(get_fit_now_check_in, by = join_by(id == membership_id)) |>
+  filter(str_detect(id, patter = "^48Z"),
+         membership_status == "gold",
+         check_in_date == 20180109)
+
+print(gym_members)
+
+```
+
+From the gym data the two suspects were identified:
+
+-   Joe Germuska (28819)
+
+-   Jeremy Bowers (67318)
+
+**Examining the drivers license data of suspects**
+
+```{r}
+#| label: examine-drivers-license-data
+
+suspect <- drivers_license |>
+  full_join(person, by = join_by(id == license_id)) |>
+  filter(id.y %in% c(28819, 67318),
+         str_detect(plate_number, pattern = "H42W"))
+
+print(suspect)
+  
+```
+
+given information matches Jeremy Bowers (67318)
+
+**Checking interview of suspect**
+
+```{r}
+#| label: checking-suspect-interview
+
+suspect_interview <- interview |>
+  filter(person_id == 67318)
+
+print(suspect_interview$transcript)
+
+```
+
+Not Jeremy Bowers, more information about the suspect was given:
+
+-   female
+
+-   65 or 67 inches tall
+
+-   red hair
+
+-   drives Tesla Model S
+
+-   has a lot of money
+
+-   attended SQL Symphony 3 times in December 2017
+
+**Searching drivers license data with new information**
+
+```{r}
+#| label: search-drivers-license-data
+
+new_suspects <- drivers_license |>
+  full_join(person, by = join_by(id == license_id)) |>
+  filter(gender == "female",
+         hair_color == "red",
+         height %in% c(65, 66, 67),
+         car_make == "Tesla",
+         car_model == "Model S")
+
+print(new_suspects)
+```
+
+Narrowed down to three suspects:
+
+-   Miranda Priestly (99716)
+
+-   Regina George (90700)
+
+-   Red Korb (78881)
+
+**Searching through facebook data**
+
+```{r}
+#| label: search-facebook-data
+
+suspects2 <- facebook_event_checkin |>
+  filter(event_name == "SQL Symphony Concert",
+         str_detect(as.character(date), pattern = "201712"),
+         person_id %in% c(99716, 90700, 78881))
+
+print(suspects2$person_id)
+
+```
+
+This returns the id 99716 which corresponds to Miranda Priestly. Therefore this is the murderer.
+
 ## And the final suspect is...
 
-*Put the name of the person responsible for the murder here:*
+*Put the name of the person responsible for the murder here: Miranda Preistly*
