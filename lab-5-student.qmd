@@ -1,6 +1,6 @@
 ---
 title: "Lab 5: Murder in SQL City"
-author: "Your name here!"
+author: "Carson Neubert"
 format: html
 editor: source
 embed-resources: true
@@ -18,16 +18,15 @@ The relational data you will be working with contains tables with different piec
 
 Solve the murder mystery, showing **all of your work in this document**. Your document and code must be well organized, easy to follow, and reproducible.
 
-+ Use headers and written descriptions to indicate what you are doing.
-+ Use `dplyr` verbs and `join` functions rather than just looking through the tables manually.
-+ Use good code formatting practices.
-+ Comment your code.
-+ Cite any external sources you use to solve the mystery.
+-   Use headers and written descriptions to indicate what you are doing.
+-   Use `dplyr` verbs and `join` functions rather than just looking through the tables manually.
+-   Use good code formatting practices.
+-   Comment your code.
+-   Cite any external sources you use to solve the mystery.
 
-### Tips 
+### Tips
 
 You may find the `pull()` function handy for displaying each clue as you go along.
-
 
 ## Access the Data
 
@@ -59,10 +58,7 @@ Detective Wickham reaches out to you...
 
 ```
 
-
-**Follow the evidence to the person responsible for the murder, building a report as you go.**
-Hint: Make sure you check for interviews with any suspects!
-
+**Follow the evidence to the person responsible for the murder, building a report as you go.** Hint: Make sure you check for interviews with any suspects!
 
 ## And the final suspect is...
 
